@@ -4,43 +4,37 @@
     height: 100%;
 }
 
-.header {
-    background-color: #222222;
-    color: #f2f2f2;
-}
-
-.headerContainer {
+.titleContainer {
     display: flex;
     align-items: center;
-    justify-content: space-around;
-    margin-right: 12px;
-    margin-left: 12px;
-}
-
-.headerTitleContainer {
-    display: flex;
-    align-items: center;
-    margin-right: 40px;
     color: #f2f2f2;
     text-decoration: none;
 }
 
-.headerLogo {
-    height: 40px;
-}
-
-.headerTitle {
-    margin-left: 12px;
+.title {
     font-weight: 600;
 }
 
-.headerNavList {
+.menu {
+    position: relative;
+    z-index: 99;
     display: flex;
-    list-style: none;
-    padding-left: 0;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #222222;
+    color: #f2f2f2;
+    padding: 0.25rem 1.5rem;
 }
 
-.headerNavPageLink {
+.menuNavList {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    padding-left: 0;
+    gap: 20px;
+}
+
+.menuNavPageLink {
     color: #f2f2f2;
     text-decoration: none;
     opacity: 0.75;
@@ -50,29 +44,80 @@
     transition-property: opacity;
 }
 
-.headerNavPageLink:hover {
+.menuNavPageLink:hover {
     opacity: 1;
 }
 
-.headerNavPageLinkActive {
+.menuNavPageLinkActive {
     color: #f2f2f2;
     text-decoration: none;
 }
 
-.headerNavLeftMargin {
-    margin-left: 20px;
-}
-
-.headerRightText {
+.rightTitle {
     font-weight: normal;
-    margin-left: 40px;
-}
-
-.microsoftLogo {
-    height: 23px;
-    font-weight: 600;
 }
 
 .githubLogo {
     height: 20px;
+}
+
+.hamburger {
+    appearance: none;
+    outline: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+
+    display: none;
+    width: 2rem;
+    height: 2rem;
+}
+
+.mobileMenu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 98;
+
+    padding-top: 6rem;
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: 0.3s;
+    background-color: #222222;
+    color: #f2f2f2;
+}
+
+.mobileMenuOpen {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mobileMenuOpen a {
+    display: block;
+    padding: 1rem;
+    color: #f2f2f2;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1.25rem;
+    transition: 0.3s;
+}
+
+.mobileMenuOpen a:hover {
+    color: #222222;
+    background-color: #f2f2f2;
+}
+
+@media only screen and (max-width: 768px) {
+    .mobileMenu,
+    .hamburger {
+        display: block;
+    }
+
+    .menuNavList,
+    .rightTitle {
+        display: none;
+    }
 }

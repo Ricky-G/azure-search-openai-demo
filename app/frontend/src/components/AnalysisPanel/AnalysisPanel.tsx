@@ -12,13 +12,14 @@ interface Props {
     activeTab: AnalysisPanelTabs;
     onActiveTabChanged: (tab: AnalysisPanelTabs) => void;
     activeCitation: string | undefined;
-    citationHeight: string;
     answer: AskResponse;
 }
 
+const pivotStyle = { itemContainer: { height: "100%" } };
+const citationPivotItemStyle = { height: "100%" };
 const pivotItemDisabledStyle = { disabled: true, style: { color: "grey" } };
 
-export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeight, className, onActiveTabChanged }: Props) => {
+export const AnalysisPanel = ({ answer, activeTab, activeCitation, className, onActiveTabChanged }: Props) => {
     const isDisabledThoughtProcessTab: boolean = !answer.thoughts;
     const isDisabledSupportingContentTab: boolean = !answer.data_points.length;
     const isDisabledCitationTab: boolean = !activeCitation;
@@ -30,6 +31,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
             className={className}
             selectedKey={activeTab}
             onLinkClick={pivotItem => pivotItem && onActiveTabChanged(pivotItem.props.itemKey! as AnalysisPanelTabs)}
+            styles={pivotStyle}
         >
             <PivotItem
                 itemKey={AnalysisPanelTabs.ThoughtProcessTab}
@@ -49,8 +51,9 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 itemKey={AnalysisPanelTabs.CitationTab}
                 headerText="Citation"
                 headerButtonProps={isDisabledCitationTab ? pivotItemDisabledStyle : undefined}
+                style={citationPivotItemStyle}
             >
-                <iframe title="Citation" src={activeCitation} width="100%" height={citationHeight} />
+                <iframe title="Citation" src={activeCitation} className={styles.iframe} />
             </PivotItem>
         </Pivot>
     );

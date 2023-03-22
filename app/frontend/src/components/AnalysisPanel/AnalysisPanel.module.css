@@ -1,6 +1,14 @@
 .thoughtProcess {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+    font-size: 14px;
     word-wrap: break-word;
     padding-top: 12px;
     padding-bottom: 12px;
+}
+
+.iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding-top: 12px;
 }

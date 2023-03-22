@@ -4,6 +4,7 @@ import { SparkleFilled } from "@fluentui/react-icons";
 
 import styles from "./Chat.module.css";
 
+import useMediaQuery from "../../hooks/useMediaQuery";
 import { chatApi, Approaches, AskResponse, ChatRequest, ChatTurn } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
@@ -14,6 +15,8 @@ import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
 
 const Chat = () => {
+    const isSmallScreen = useMediaQuery("(max-width: 425px)");
+
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
@@ -124,17 +127,25 @@ const Chat = () => {
         setSelectedAnswer(index);
     };
 
+    const showAnalysisPanel = answers.length > 0 && activeAnalysisPanelTab;
+    const showEmptyState = !lastQuestionRef.current;
+
     return (
         <div className={styles.container}>
             <div className={styles.commandsContainer}>
-                <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
-                <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+                <ClearChatButton onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
+                <SettingsButton onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
             </div>
             <div className={styles.chatRoot}>
                 <div className={styles.chatContainer}>
-                    {!lastQuestionRef.current ? (
+                    {showEmptyState ? (
                         <div className={styles.chatEmptyState}>
-                            <SparkleFilled fontSize={"120px"} primaryFill={"rgba(115, 118, 225, 1)"} aria-hidden="true" aria-label="Chat logo" />
+                            <SparkleFilled
+                                fontSize={isSmallScreen ? "80px" : "120px"}
+                                primaryFill={"rgba(115, 118, 225, 1)"}
+                                aria-hidden="true"
+                                aria-label="Chat logo"
+                            />
                             <h1 className={styles.chatEmptyStateTitle}>Chat with your data</h1>
                             <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
                             <ExampleList onExampleClicked={onExampleClicked} />
@@ -188,65 +199,64 @@ const Chat = () => {
                     </div>
                 </div>
 
-                {answers.length > 0 && activeAnalysisPanelTab && (
+                {showAnalysisPanel && (
                     <AnalysisPanel
                         className={styles.chatAnalysisPanel}
                         activeCitation={activeCitation}
                         onActiveTabChanged={x => onToggleTab(x, selectedAnswer)}
-                        citationHeight="810px"
                         answer={answers[selectedAnswer][1]}
                         activeTab={activeAnalysisPanelTab}
                     />
                 )}
-
-                <Panel
-                    headerText="Configure answer generation"
-                    isOpen={isConfigPanelOpen}
-                    isBlocking={false}
-                    onDismiss={() => setIsConfigPanelOpen(false)}
-                    closeButtonAriaLabel="Close"
-                    onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
-                    isFooterAtBottom={true}
-                >
-                    <TextField
-                        className={styles.chatSettingsSeparator}
-                        defaultValue={promptTemplate}
-                        label="Override prompt template"
-                        multiline
-                        autoAdjustHeight
-                        onChange={onPromptTemplateChange}
-                    />
-
-                    <SpinButton
-                        className={styles.chatSettingsSeparator}
-                        label="Retrieve this many documents from search:"
-                        min={1}
-                        max={50}
-                        defaultValue={retrieveCount.toString()}
-                        onChange={onRetrieveCountChange}
-                    />
-                    <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useSemanticRanker}
-                        label="Use semantic ranker for retrieval"
-                        onChange={onUseSemanticRankerChange}
-                    />
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useSemanticCaptions}
-                        label="Use query-contextual summaries instead of whole documents"
-                        onChange={onUseSemanticCaptionsChange}
-                        disabled={!useSemanticRanker}
-                    />
-                    <Checkbox
-                        className={styles.chatSettingsSeparator}
-                        checked={useSuggestFollowupQuestions}
-                        label="Suggest follow-up questions"
-                        onChange={onUseSuggestFollowupQuestionsChange}
-                    />
-                </Panel>
             </div>
+
+            <Panel
+                headerText="Configure answer generation"
+                isOpen={isConfigPanelOpen}
+                isBlocking={false}
+                onDismiss={() => setIsConfigPanelOpen(false)}
+                closeButtonAriaLabel="Close"
+                onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
+                isFooterAtBottom={true}
+            >
+                <TextField
+                    className={styles.chatSettingsSeparator}
+                    defaultValue={promptTemplate}
+                    label="Override prompt template"
+                    multiline
+                    autoAdjustHeight
+                    onChange={onPromptTemplateChange}
+                />
+
+                <SpinButton
+                    className={styles.chatSettingsSeparator}
+                    label="Retrieve this many documents from search:"
+                    min={1}
+                    max={50}
+                    defaultValue={retrieveCount.toString()}
+                    onChange={onRetrieveCountChange}
+                />
+                <TextField className={styles.chatSettingsSeparator} label="Exclude category" onChange={onExcludeCategoryChanged} />
+                <Checkbox
+                    className={styles.chatSettingsSeparator}
+                    checked={useSemanticRanker}
+                    label="Use semantic ranker for retrieval"
+                    onChange={onUseSemanticRankerChange}
+                />
+                <Checkbox
+                    className={styles.chatSettingsSeparator}
+                    checked={useSemanticCaptions}
+                    label="Use query-contextual summaries instead of whole documents"
+                    onChange={onUseSemanticCaptionsChange}
+                    disabled={!useSemanticRanker}
+                />
+                <Checkbox
+                    className={styles.chatSettingsSeparator}
+                    checked={useSuggestFollowupQuestions}
+                    label="Suggest follow-up questions"
+                    onChange={onUseSuggestFollowupQuestionsChange}
+                />
+            </Panel>
         </div>
     );
 };
